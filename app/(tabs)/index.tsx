@@ -1,75 +1,217 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { FilterModal } from '@/components/filter/FilterModal';
+import { PetCard } from '@/components/pets/PetCard';
+import { PetCategories } from '@/components/pets/PetCategories';
+import { SearchBar } from '@/components/search/SearchBar';
+import { languageService } from '@/services/languageService';
+import { Pet, PetFilters, petCategories, petService } from '@/services/petService';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
 
 export default function HomeScreen() {
+  const [pets, setPets] = useState<Pet[]>([]);
+  const [filteredPets, setFilteredPets] = useState<Pet[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [appliedFilters, setAppliedFilters] = useState<PetFilters>({});
+
+  useEffect(() => {
+    loadPets();
+  }, []);
+
+  useEffect(() => {
+    filterPets();
+  }, [pets, selectedCategory, searchQuery, appliedFilters]);
+
+  const loadPets = async () => {
+    try {
+      setLoading(true);
+      const petsData = await petService.getPets();
+      setPets(petsData);
+    } catch (error) {
+      console.error('Error loading pets:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filterPets = () => {
+    let filtered = [...pets];
+
+    // Filter by category
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter(pet => pet.category === selectedCategory);
+    }
+
+    // Filter by search query (only by name)
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(pet =>
+        pet.name.toLowerCase().includes(query)
+      );
+    }
+
+    // Apply additional filters
+    if (appliedFilters.age) {
+      filtered = filtered.filter(pet => {
+        const age = pet.age.toLowerCase();
+        return age.includes(appliedFilters.age!.toLowerCase());
+      });
+    }
+
+    if (appliedFilters.size) {
+      filtered = filtered.filter(pet => pet.size === appliedFilters.size);
+    }
+
+    if (appliedFilters.gender) {
+      filtered = filtered.filter(pet => pet.gender === appliedFilters.gender);
+    }
+
+    setFilteredPets(filtered);
+  };
+
+  const handleCategoryPress = (categoryId: string) => {
+    setSelectedCategory(categoryId);
+  };
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const handleFilterPress = () => {
+    setShowFilterModal(true);
+  };
+
+  const handleApplyFilters = (filters: PetFilters) => {
+    setAppliedFilters(filters);
+  };
+
+  const handlePetPress = (id: string) => {
+    // Navigate to pet details
+    console.log('Navigate to pet:', id);
+  };
+
+  const renderPetCard = ({ item }: { item: Pet }) => (
+    <PetCard
+      id={item.id}
+      name={item.name}
+      breed={item.breed}
+      age={item.age}
+      location={item.location}
+      imageUrl={item.imageUrl}
+      gender={item.gender}
+      onPress={handlePetPress}
+    />
+  );
+
+  const renderHeader = () => (
+    <View style={styles.header}>
+      <ThemedText type="title" style={styles.title}>
+        {languageService.translate('home')}
+      </ThemedText>
+      <ThemedText style={styles.subtitle}>
+        Find your perfect companion
+      </ThemedText>
+    </View>
+  );
+
+  if (loading) {
+    return (
+      <ThemedView style={styles.loadingContainer}>
+        <ActivityIndicator size="large" />
+        <ThemedText style={styles.loadingText}>Loading pets...</ThemedText>
+      </ThemedView>
+    );
+  }
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <ThemedView style={styles.container}>
+      {renderHeader()}
+      
+      <SearchBar
+        searchQuery={searchQuery}
+        onSearchChange={handleSearchChange}
+        onFilterPress={handleFilterPress}
+        placeholder={languageService.translate('searchPets')}
+      />
+
+      <PetCategories
+        categories={petCategories}
+        selectedCategory={selectedCategory}
+        onCategoryPress={handleCategoryPress}
+      />
+
+      <FlatList
+        data={filteredPets}
+        renderItem={renderPetCard}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.list}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          <View style={styles.emptyState}>
+            <ThemedText type="subtitle" style={styles.emptyTitle}>
+              No pets found
+            </ThemedText>
+            <ThemedText style={styles.emptyDescription}>
+              Try adjusting your search or filters
+            </ThemedText>
+          </View>
+        }
+      />
+
+      <FilterModal
+        visible={showFilterModal}
+        onClose={() => setShowFilterModal(false)}
+        onApplyFilters={handleApplyFilters}
+      />
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
+  container: {
+    flex: 1,
+    paddingTop: 60,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
+    paddingTop: 60,
   },
-  stepContainer: {
-    gap: 8,
+  loadingText: {
+    marginTop: 16,
+    opacity: 0.7,
+  },
+  header: {
+    paddingHorizontal: 16,
+    paddingVertical: 20,
+  },
+  title: {
+    marginBottom: 4,
+  },
+  subtitle: {
+    opacity: 0.7,
+  },
+  list: {
+    paddingHorizontal: 16,
+    paddingBottom: 100,
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 60,
+  },
+  emptyTitle: {
     marginBottom: 8,
+    textAlign: 'center',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  emptyDescription: {
+    textAlign: 'center',
+    opacity: 0.7,
   },
 });

@@ -1,50 +1,182 @@
-# Welcome to your Expo app 👋
+# Adopaw - Pet Adoption App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A modern React Native pet adoption app built with Expo Router, featuring a beautiful UI, multi-language support, and comprehensive pet management features.
 
-## Get started
+## Features
 
-1. Install dependencies
+### 🏠 Home Page
+- **Pet Categories**: Horizontal scrollable categories (All Pets, Dogs, Cats, Birds, Rabbits, Fish)
+- **Pet Cards**: Beautiful cards displaying pet information with images, names, breeds, ages, and locations
+- **Search Component**: Real-time search functionality with filter button
+- **Filter Component**: Advanced filtering by age, size, and gender
+- **API Integration**: Mock API service ready for backend integration
 
+### 🔍 Search & Filtering
+- **Real-time Search**: Search pets by name, breed, or location
+- **Category Filtering**: Filter by pet type
+- **Advanced Filters**: Filter by age, size, and gender
+- **Filter Modal**: Beautiful modal interface for filter options
+
+### 🌐 Multi-Language Support
+- **4 Languages**: English, Spanish, French, Arabic
+- **Language Service**: Centralized translation management
+- **Dynamic UI**: All text elements support multiple languages
+- **Easy Extension**: Simple to add new languages
+
+### 📱 Bottom Navigation
+- **4 Tabs**: Home, Explore, Favorites, Profile
+- **Active States**: Visual feedback for active tabs
+- **Icons**: SF Symbols with Material Icons fallback
+- **Haptic Feedback**: Enhanced user experience
+
+### 🎨 UI/UX Features
+- **Dark/Light Mode**: Automatic theme switching
+- **Responsive Design**: Works on all screen sizes
+- **Modern Design**: Clean, intuitive interface
+- **Loading States**: Smooth loading experiences
+- **Empty States**: Helpful messages when no data
+
+## Project Structure
+
+```
+adopaw-frontend/
+├── app/
+│   ├── (tabs)/
+│   │   ├── index.tsx          # Home page with pets listing
+│   │   ├── explore.tsx        # Resources and information
+│   │   ├── favorites.tsx      # Saved pets
+│   │   ├── profile.tsx        # User profile and settings
+│   │   └── _layout.tsx        # Tab navigation layout
+│   └── _layout.tsx            # Root layout
+├── components/
+│   ├── pets/
+│   │   ├── PetCard.tsx        # Individual pet card component
+│   │   └── PetCategories.tsx  # Category selection component
+│   ├── search/
+│   │   └── SearchBar.tsx      # Search input with filter button
+│   ├── filter/
+│   │   └── FilterModal.tsx    # Filter options modal
+│   └── ui/
+│       └── IconSymbol.tsx     # Cross-platform icon component
+├── services/
+│   ├── petService.ts          # Pet data and API management
+│   └── languageService.ts     # Multi-language support
+└── constants/
+    └── Colors.ts              # Theme colors
+```
+
+## Components
+
+### PetCard
+- Displays pet information in an attractive card format
+- Shows pet image, name, breed, age, and location
+- Touchable with navigation support
+- Responsive design with shadows and rounded corners
+
+### PetCategories
+- Horizontal scrollable category buttons
+- Active state highlighting
+- Supports all pet types
+- Easy to extend with new categories
+
+### SearchBar
+- Search input with magnifying glass icon
+- Filter button for advanced options
+- Real-time search functionality
+- Placeholder text support
+
+### FilterModal
+- Modal overlay with filter options
+- Age, size, and gender filters
+- Reset and apply functionality
+- Beautiful UI with proper spacing
+
+## Services
+
+### PetService
+- Mock API implementation
+- Pet data management
+- Filtering and search logic
+- Ready for real API integration
+
+### LanguageService
+- Multi-language translation system
+- 4 supported languages
+- Easy to add new languages
+- Fallback to English
+
+## Getting Started
+
+1. **Install Dependencies**
    ```bash
    npm install
    ```
 
-2. Start the app
-
+2. **Start Development Server**
    ```bash
-   npx expo start
+   npm start
    ```
 
-In the output, you'll find options to open the app in a
+3. **Run on Platform**
+   ```bash
+   # iOS
+   npm run ios
+   
+   # Android
+   npm run android
+   
+   # Web
+   npm run web
+   ```
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## API Integration
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+The app currently uses mock data but is designed for easy API integration:
 
-## Get a fresh project
+1. Update `services/petService.ts` with your API endpoints
+2. Replace mock data with actual API calls
+3. Update the base URL in the service
+4. Handle authentication if required
 
-When you're ready, run:
+## Adding New Languages
 
-```bash
-npm run reset-project
-```
+1. Add language to `supportedLanguages` array in `languageService.ts`
+2. Add translations to the `translations` object
+3. Update the language selection UI if needed
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Customization
 
-## Learn more
+### Colors
+- Update `constants/Colors.ts` for theme customization
+- Supports light and dark mode
+- Easy to modify tint colors
 
-To learn more about developing your project with Expo, look at the following resources:
+### Icons
+- Add new icon mappings in `components/ui/IconSymbol.tsx`
+- Uses SF Symbols on iOS, Material Icons on Android/Web
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### Styling
+- All components use StyleSheet for consistent styling
+- Easy to modify colors, spacing, and layout
+- Responsive design principles
 
-## Join the community
+## Technologies Used
 
-Join our community of developers creating universal apps.
+- **React Native**: Cross-platform mobile development
+- **Expo Router**: File-based routing
+- **TypeScript**: Type safety and better development experience
+- **Expo**: Development platform and tools
+- **React Native Reanimated**: Smooth animations
+- **Expo Image**: Optimized image loading
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test on multiple platforms
+5. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License.
