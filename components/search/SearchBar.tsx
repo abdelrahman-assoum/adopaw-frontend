@@ -33,8 +33,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           style={[styles.input, { color: colors.text }]}
           value={searchQuery}
           onChangeText={onSearchChange}
-          placeholder={placeholder}
-          placeholderTextColor={colors.tabIconDefault}
+          placeholder="Search for Pet"
+          placeholderTextColor="#6c757d"
         />
       </View>
       <TouchableOpacity
@@ -52,8 +52,8 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
     gap: 12,
   },
   searchContainer: {
@@ -62,11 +62,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#f8f9fa',
+    borderColor: '#e9ecef',
   },
   searchIcon: {
-    marginRight: 8,
+    marginRight: 12,
   },
   input: {
     flex: 1,
@@ -75,5 +77,6 @@ const styles = StyleSheet.create({
   filterButton: {
     padding: 12,
     borderRadius: 12,
+    backgroundColor: '#2196F3',
   },
 }); 

@@ -3,11 +3,36 @@ import { ThemedView } from '@/components/ThemedView';
 import { FilterModal } from '@/components/filter/FilterModal';
 import { PetCard } from '@/components/pets/PetCard';
 import { PetCategories } from '@/components/pets/PetCategories';
+import { PetGrid } from '@/components/pets/PetGrid';
 import { SearchBar } from '@/components/search/SearchBar';
 import { languageService } from '@/services/languageService';
-import { Pet, PetFilters, petCategories, petService } from '@/services/petService';
+import { Pet, PetFilters, petService } from '@/services/petService';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
+
+const samplePets = [
+  {
+    id: '1',
+    name: 'Bella',
+    image: 'https://example.com/bella.jpg',
+    gender: 'female',
+  },
+  {
+    id: '2',
+    name: 'Max',
+    image: 'https://example.com/max.jpg',
+    gender: 'male',
+  },
+  // Add more sample pets...
+];
+
+const sampleCategories = [
+  { id: 'all', name: 'All Pets', icon: '🐾', emoji: '🐾' },
+  { id: 'cats', name: 'Cats', icon: '🐱', emoji: '🐱' },
+  { id: 'dogs', name: 'Dogs', icon: '🐶', emoji: '🐶' },
+  { id: 'birds', name: 'Birds', icon: '🦜', emoji: '🦜' },
+  { id: 'rabbits', name: 'Rabbits', icon: '🐰', emoji: '🐰' },
+];
 
 export default function HomeScreen() {
   const [pets, setPets] = useState<Pet[]>([]);
@@ -139,27 +164,14 @@ export default function HomeScreen() {
       />
 
       <PetCategories
-        categories={petCategories}
+        categories={sampleCategories} // Use sampleCategories instead of petCategories
         selectedCategory={selectedCategory}
         onCategoryPress={handleCategoryPress}
       />
 
-      <FlatList
-        data={filteredPets}
-        renderItem={renderPetCard}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.list}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={
-          <View style={styles.emptyState}>
-            <ThemedText type="subtitle" style={styles.emptyTitle}>
-              No pets found
-            </ThemedText>
-            <ThemedText style={styles.emptyDescription}>
-              Try adjusting your search or filters
-            </ThemedText>
-          </View>
-        }
+      <PetGrid 
+        pets={filteredPets.length > 0 ? filteredPets : pets} 
+        onPetPress={handlePetPress}
       />
 
       <FilterModal
